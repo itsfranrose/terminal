@@ -1,0 +1,8 @@
+zzz="""
+This should be a temporary file until I create a mechanism that brings order
+ and automation to the scripts in Scripts.
+"""
+
+alias filmpy="python3 $PROJECTS_DIR/moviescanner/main.py"
+alias randspotify="python3 $SCRIPTS_DIR/randspotify.py"
+
