@@ -1,0 +1,26 @@
+alias psql-system="sudo -u postgres psql"
+stockerpsql_id_seq_reset() {
+    name="$1_$2"
+    name_quoted="'"$name"'"
+    echo "BEGIN;
+    SELECT setval(pg_get_serial_sequence($name_quoted),'id'), coalesce(max("id"), 1), max("id") IS NOT null) FROM $name;
+    COMMIT;" | psql stocker
+}
+
+psql-init-db() {
+    if [ -n "$1" ]; then
+        psql postgres -c "create database $1;"
+        psql postgres -c "grant connect on database $1 to public;"
+    
+        psql $1 -c "create role $1;"
+        psql $1 -c "alter role $1 with login;"
+        psql $1 -c "alter role $1 with password '$1';"
+        psql $1 -c "grant all privileges on database $1 to $1;"
+        psql $1 -c "alter role $1 superuser;"
+
+        psql $1 -c "alter role $1 set client_encoding to 'utf8'"
+        psql $1 -c "alter role $1 set timezone to 'UTC'"
+    else
+        echo "Argument db-name was not provided."
+    fi
+}
