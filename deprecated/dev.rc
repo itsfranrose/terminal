@@ -1,0 +1,13 @@
+alias djconf='function _djconf(){cd $1; export DJANGO_SETTINGS_MODULE=$2;};_djconf;unset -f _djconf;'
+alias djshell='function _djshell(){djconf $1 $2; python $1/manage.py shell -i ipython;};_djshell; unset -f djshell'
+alias stocker_shell='workon stocker; djshell /home/mehdi/Bedroom/Projects/Stocker Stocker.settings'
+alias prodify='workon prod_sheets; djconf /home/mehdi/Bedroom/Projects/prod_sheets prod_sheets.settings; python manage.py run'
+alias djshell_scrapy='function _f(){cd $1; export DJANGO_SETTINGS_MODULE=$2; python $1/../manage.py shell -i ipython};_f;unset -f _f'
+alias stocker_debug_shell='workon stocker; djshell_scrapy /home/mehdi/Bedroom/Projects/Stocker/scrapy_scrapers Stocker.settings'
+alias runpy='function _runpy(){workon $1; python /home/mehdi/Bedroom/Scripts/$2.py;};_runpy;unset -f _runpy'
+alias urlfetcher="workon stocker; python /home/mehdi/Bedroom/Scripts/link_fetcher.py"
+alias extract-sub="python /home/mehdi/Bedroom/Projects/extract-subs/main.py"
+function _install_gnome_extension(){ MY_EXT_UUID=`unzip -p $1 metadata.json | jq -r ".uuid"`; echo $MY_EXT_UUID; unzip $1 -d /home/mehdi/.local/share/gnome-shell/extensions/$MY_EXT_UUID ; }
+function gnome-shell-reset(){ killall -SIGQUIT gnome-shell ; }
+
+
