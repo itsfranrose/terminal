@@ -1,0 +1,23 @@
+tsocks-switchconf() {
+    local config_dir="/etc"
+    local symlink_file="$config_dir/tsocks.conf"
+    local target_file1="$config_dir/tsocks.v2ray.conf"
+    local target_file2="$config_dir/tsocks.nekoray.conf"
+
+    # Determine the current target of the symlink
+    local current_target=$(readlink -f "$symlink_file")
+
+    # Switch the symlink target
+    if [ "$current_target" = "$target_file1" ]; then
+        sudo ln -sf "$target_file2" "$symlink_file"
+        echo "Switched symlink to $target_file2"
+    else
+        sudo ln -sf "$target_file1" "$symlink_file"
+        echo "Switched symlink to $target_file1"
+    fi
+}
+
+alias nmap-netscan="nmap -sn" # 192.168.0.0/24, or 0.0.0.0
+
+alias dl="aria2c --conf-path=$HOME_DIR/.aria2c"
+alias dl-server="aria2c --conf-path=$HOME_DIR/.aria2c --enable-rpc"
