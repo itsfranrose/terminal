@@ -1,0 +1,27 @@
+#!/bin/bash
+
+integrate-new-github-repo() {
+    local backup_dir=$(mktemp -d)
+    cp -a . "$backup_dir"
+    
+    if [ ! -d ".git" ]; then
+        git init
+    fi
+    git remote add origin "$1"
+    git fetch origin
+
+    for branch in $(git branch --remotes | grep -v 'origin/main' | grep -v 'origin/HEAD'); do
+        local branch_name=$(echo "$branch" | sed 's#origin/##')
+        git checkout "$branch_name"
+        git pull origin "$branch_name"
+        if git show-ref --verify --quiet "refs/heads/$branch_name"; then
+            git branch --set-upstream-to="origin/$branch_name" "$branch_name"
+        fi
+    done
+
+    git checkout -b main
+    git pull origin main
+    cp -f "$backup_dir"/. .
+    git branch --set-upstream-to=origin/main main
+    rm -rf "$backup_dir"
+}
