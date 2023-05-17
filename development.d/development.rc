@@ -1,0 +1,48 @@
+alias ipy="python3 -c 'import IPython;
+IPython.terminal.ipapp.launch_new_instance()'"
+
+djangoshell() {
+    local djdir="$PROJECTS_DIR/$1"
+    python3 $djdir/manage.py shell -i ipython
+}
+
+runpy() {
+    local venv_var=$VIRTUAL_ENV
+    workon scripts
+    python3 $SCRIPTS_DIR/"$2"
+    workon $(basename $venv_var)
+}
+
+alias urlfetcher="workon stocker; python3 $SCRIPTS_DIR/link_fetcher.py"
+alias extract-sub="python3 $PROJECTS_DIR/extract-subs/main.py"
+zzz="""dynamically import python projects.
+"""
+
+gnome-extension-install() {
+    MY_EXT_UUID=`unzip -p $1 metadata.json | jq -r ".uuid"`
+    echo $MY_EXT_UUID
+    unzip $1 -d "$HOME_DIR/.local/share/gnome-shell/extensions/$MY_EXT_UUID"
+}
+
+gnome-shell-reset() {
+    killall -SIGQUIT gnome-shell
+}
+
+pycache-clean() {
+    find . -type d -name "__pycache__" -exec rm -rf {} +
+}
+
+alias git-timemachine="$PROJECTS_DIR/git-timemachine/run.sh"
+
+zzz="""
+write functions that categorize and then act upon projects define in
+ ~/Bedroom/Projects
+
+Also move Projects, Scripts, .mehdi.d, VBOX to a folder called GARAGE.
+ as for .mehdi.d, rename it to bash-rc and make a symlink ~/.mehdi.d/ if possible.
+
+Also, as for projects that have designated venv, there should be an optional file
+ called .venv which contains only the name of the venv. So e.g. the function djangoshell
+ can look for it, and if found can use workon on that venv before calling shell.
+"""
+
