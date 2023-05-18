@@ -1,0 +1,10 @@
+export V2RAY_SOCKS="localhost:10808"
+export V2RAY_HTTP="localhost:10807"
+export NEKORAY_PROXY="localhost:10806"
+
+alias v2ray-socks-proxy="export HTTP_PROXY=socks5://$V2RAY_SOCKS && export HTTPS_PROXY=socks5://$V2RAY_SOCKS"
+alias v2ray-http-proxy="export HTTP_PROXY=http://$V2RAY_HTTP && export HTTPS_PROXT=https://$V2RAY_HTTP"
+alias nekoray-socks-proxy="export HTTP_PROXY=socks5://$NEKORAY_PROXY && export HTTPS_PROXY=$NEKORAY_PROXY"
+alias nekoray-http-proxy="export HTTP_PROXY=http://$NEKORAY_PROXY && export HTTPS_PROXY=$NEKORAY_PROXY"
+
+alias unset-proxy="unset HTTP_PROXY && unset HTTPS_PROXY"
