@@ -1,0 +1,32 @@
+#!/bin/bash
+
+excluded=()
+excluded_paths=($(_name_to_path $(realpath $0) "${excluded[@]}"))
+sourcer $(dirname $0) $excluded_paths
+
+
+# if used, this should be in ~/.mehdirc
+
+# This function is designed to be used inside "mainrc" files.
+#  Its function is to get a list of file/dir names and turn them to
+#  full paths. Make sure not to print or echo anything else inside it,
+#  because unfortunately, to transfer a list of data outside the
+#  function, it prints it and then the function caller must take it
+#  and turn it into a list again. It's exhausting, I know.
+# TODO: change this way of passing data when you've learnt more about it.
+function _name_to_path {
+    curdir=$(dirname $1)
+    excluded=("${@:2}")
+    newpaths=()
+    for name in "${excluded[@]}"; do
+        newpath="$curdir/$name"
+        if [ -n "$newpath" ] && [ -e "$newpath" ]; then
+            newpaths+=("$newpath")
+        fi
+    done
+    printf '%s\n' "${newpaths[@]}"
+}
+
+alias sourcer="source /home/mehdi/Bedroom/Scripts/sourcer.sh"
+
+
