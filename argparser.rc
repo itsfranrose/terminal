@@ -1,0 +1,88 @@
+argparse() {
+    # https://github.com/nhoffman/argparse-bash
+    local pyscript=$(cat <<EOF
+import os
+import sys
+import string
+import argparse
+
+for arg in sys.argv:
+    print(arg)
+
+class ArgParser(argparse.ArgumentParser):
+    def print_help(self, file=None):
+        super().print_help(file=file)
+        sys.exit(1)
+
+parser = ArgParser(prog=os.path.basename("$0"),
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            description="""$ARGPARSE_DESCRIPTION""")
+
+argument_codes=os.environ['ARGPARSE_ARGS']
+for code in argument_codes.strip().split(string.whitespace[2]):
+    eval(code)
+
+args = parser.parse_args()
+for arg in [a for a in dir(args) if not a.startswith('_')]:
+    key = arg.upper()
+    value = getattr(args, arg, None)
+
+    if isinstance(value, bool) or value is None:
+        print('{0}=\'{1}\';'.format(key, 'yes' if value else ''))
+    elif isinstance(value, list):
+        print('{0}=({1});'.format(key, ' '.join('\'{0}\''.format(s) for s in value)))
+    else:
+        print('{0}=\'{1}\';'.format(key, value))
+EOF
+)
+    local file=$(mktemp 2>/dev/null)
+    echo "$pyscript" > $file 
+    python3 "$file" "$@"
+    rm -f $file
+}
+
+func() {
+    export ARGPARSE_ARGS="""
+parser.add_argument('filename', help='name of the file')
+parser.add_argument('-o', '--output', default='output.txt', help='output filename')
+parser.add_argument('-v', '--verbose', action='store_true', help='enable verbose mode')
+parser.add_argument('-l', '--level', choices=['low', 'medium', 'high'], default='medium', help='set level')
+parser.add_argument('-n', '--count', type=int, help='number of iterations')
+"""
+    argparse "$@"
+}
+
+# fix this...
+# also write another bash function to count the number of 
+#  lines and the number of files and their sizes.
+
+# todo: new project
+zzz="""
+write a bash function that parses arguments.
+It should support its own grammar.
+But the first part of it is to seperate the first level of abstraction.
+It should probably take the called function's or script's arguments
+ and also should take a multi-line text that contains the definition of
+ the parser.
+ One of these should be passed inside an env variable and the other through
+ the func/script args.
+It should analyze and categorize the original caller's arguments as the first abstraction level.
+ It should iterate over the args and seperate the key/value args and positional args.
+ The key/value args (kvargs) can divided to 6 categories:
+    -[letter] [value]
+    -[letter]=[value]
+    -[word] [value]
+    -[word]=[value]
+    --[word] [value]
+    --[word]=[value]
+ Then there's the positional arguments. This should be handled during the second iteration
+  of the args. They should be stored in the order provided.
+The function should support kvargs also as positional arguments. Meaning that if
+ an arg was defined to be positional like (filename) and during the call was addressed
+ as (--filename [value]), it should be considered as a positional argument. But this should
+ be in the next levels of abstraction.
+ .
+ .
+ .
+ more features to come.
+"""
