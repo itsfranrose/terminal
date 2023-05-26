@@ -1,0 +1,31 @@
+find-text() {
+    local pattern
+    local rootdir
+    local depth
+    pattern="$1"
+    rootdir="$2"
+    depth=""
+    echo "pattern=$pattern rootdir=$rootdir depth=$depth"
+    return
+    local excluded_dirs=(".obsidian" ".git")
+    local cmd
+    if [ "$depth" = "n" ]; then
+        cmd="find $rootdir"
+    else
+        cmd="find $rootdir -maxdepth $depth"
+    fi
+
+    for dir in "${excluded_dirs[@]}"; do
+        cmd+=" -not -path '*/$dir/*' -not -name '$dir'"
+    done
+
+    cmd+=" -type f -exec grep -Hn --color=auto -e '$pattern' {} +"
+    eval "$cmd"
+}
+
+zzz="""
+The find-text function should be completed by parsing the args.
+
+Define a function that takes a directory and counts how many line of text existed upon how many
+ number of files, and also say how much size it is.
+"""
