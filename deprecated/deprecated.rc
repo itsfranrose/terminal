@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# for anki blank screen
+export QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox"
