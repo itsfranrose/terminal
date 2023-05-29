@@ -1,0 +1,8 @@
+export VBOX_LEARN_IP="192.168.1.107"
+alias ssh_learn="ssh debianu@$VBOX_LEARN_IP -p 2200"
+
+export VBOX_ANSIBLE_HOST_IP="192.168.1.110"
+alias ssh_ansible="ssh debianu@$VBOX_ANSIBLE_HOST_IP -p 2200"
+
+export VBOX_ANSIBLE_HOST2_IP="192.168.1.100"
+alias ssh_ansible2="ssh debianu@$VBOX_ANSIBLE_HOST_IP -p 2200"
