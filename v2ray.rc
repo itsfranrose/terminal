@@ -1,0 +1,43 @@
+v2ray-switchconf() {
+    local config_dir="/usr/local/etc/v2ray"
+    local symlink_file="$config_dir/config.json"
+    local target_file1="$config_dir/v2.json"
+    local target_file2="$config_dir/mosishahi.json"
+    local vbox_target_file1="$config_dir/vbox.v2.json"
+    local vbox_target_file2="$config_dir/vbox.mosishahi.json"
+
+    # Determine the current target of the symlink
+    local current_target=$(readlink -f "$symlink_file")
+
+    # Switch the symlink target
+    if [ "$1" = "--vbox" ]; then
+        if [ "$current_target" = "$vbox_target_file1" ]; then
+            sudo ln -sf "$vbox_target_file2" "$symlink_file"
+            echo "Switched symlink to $vbox_target_file2"
+        else
+            sudo ln -sf "$vbox_target_file1" "$symlink_file"
+            echo "Switched symlink to $vbox_target_file1"
+        fi
+    else
+        if [ "$current_target" = "$target_file1" ]; then
+            sudo ln -sf "$target_file2" "$symlink_file"
+            echo "Switched symlink to $target_file2"
+        else
+            sudo ln -sf "$target_file1" "$symlink_file"
+            echo "Switched symlink to $target_file1"
+        fi
+    fi
+}
+
+alias v2ray-log="sudo journalctl -u v2ray --since today -f"
+
+v2rayd() {
+    if [ "$1" = "disable" ] || [ "$1" = "enable" ]; then
+        systemctl "$1" v2ray.service
+    elif [ "$1" = "start" ] || [ "$1" = "stop" ] || [ "$1" = "restart" ] || [ "$1" = "status" ]; then
+        service v2ray "$1"
+    else
+        echo "Argument 1=$1 not supported or not provided."
+        return
+    fi
+}
