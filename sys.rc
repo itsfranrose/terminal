@@ -1,0 +1,13 @@
+alias shut-down="shutdown +5"
+
+userscat() {
+    result=$(sudo join -t: -1 1 -2 1 /etc/passwd /etc/shadow |
+     awk -F: '{print $1":"$5":"$3":"$4":"$8}' |
+     cat <(echo "username:name:uid:gid:password") - |
+     column --table --separator :)
+    if [ "$1" = "--cat" ]; then
+        echo $result
+    else
+        echo $result | less
+    fi
+}
