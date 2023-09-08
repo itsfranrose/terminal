@@ -1,0 +1,53 @@
+#!/bin/bash
+
+AT_LOG_FILE="${STUDIO_DIR}"/at.log
+
+_last_at_id() {
+    if [ -f "$AT_LOG_FILE" ]; then
+        tail -1 "$AT_LOG_FILE" | grep -E -o '\|[0-9]+>' | grep -E -o '[0-9]+'
+    else
+        echo "0"
+    fi
+}
+
+remindme() {
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        log_error "args 'dt', 'title', and 'desc' not provided."
+        return 1
+    fi
+    local dt="$1"
+    local title="$2"
+    local desc="$3"
+
+    atdt=$(date -d "now + ${dt}" +"%Y%m%d%H%M")
+    hrdt=$(date -d "now + ${dt}" +"%Y-%m-%d %H:%M")
+    
+    local logid=$(_last_at_id)
+    logid=$((logid + 1))
+
+    cat > /tmp/at <<EOF
+notify-send "${title}" "${desc}"
+echo "${hrdt}|${logid}> \"\"\"${title}\"\"\" \"\"\"${desc}\"\"\"" >> ${STUDIO_DIR}/at.log
+EOF
+    at -t $atdt -f /tmp/at 2>&1 | sed '2p;d'
+    rm -f /tmp/at
+}
+
+atlogre() {
+    # TODO test this
+    # reschedule already existing atlog.
+    if [ -z "$1" ] || [ -z "$2" ] || [ "$2" -lt 0 ]; then
+        log_error "args 'dt' and 'logid' were not provided."
+        return 1
+    fi
+    local dt="$1"
+    local logid="$2"
+
+    line_number=$(grep -n "|${logid}>" "$AT_LOG_FILE" | cut -d':' -f2)
+    line=$(sed "${line_number}p;d" "$AT_LOG_FILE")
+    
+    title=$(echo ${line} | awk -F'> ' '{print $2}' | awk -F'"""' '{print $2}')
+    desc=$(echo ${line} | awk -F'> ' '{print $2}' | awk -F'"""' '{print $4}')
+    
+    remindme "$dt" "$title" "$desc"
+}

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 encrypt-file() {
     local fname="$1"
     local output="$2"
@@ -28,9 +30,9 @@ encfile() {
         rm -f $fname /tmp/cred/tmp
         #chmod "$perms" "$output"
         metadata-restore "$output" "$metadata"
-        echo "encrypted $fname -> $output"
+        log_info "encrypted $fname -> $output"
     else
-        echo "files do not match, aborting..."
+        log_error "files do not match, aborting..."
         rm -f $tempfile $/tmp/cred/tmp
     fi
 }
@@ -43,7 +45,7 @@ decfile() {
     decrypt-file "$fname" "$output"
     #chmod "$perms" "$output"
     metadata-restore "$fname" "$metadata"
-    echo "decrypted $fname -> $output"
+    log_info "decrypted $fname -> $output"
 }
 
 # credentials

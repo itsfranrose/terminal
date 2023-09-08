@@ -1,0 +1,30 @@
+#!/bin/bash
+
+echo_yellow() { echo "$(tput setaf 3)$*$(tput sgr0)" ; }
+echo_bold_yellow() { echo "$(tput bold setaf 3)$*$(tput sgr0)" ; }
+
+echo_black() { echo "$(tput setaf 0)$*$(tput sgr0)" ; }
+
+echo_un_blue() { echo "$(tput smul setaf 4)$*$(tput sgr0)" ; }
+echo_bold_blue() { echo "$(tput bold setaf 4)$*$(tput sgr0)" ; }
+
+echo_bold_cyan() { echo "$(tput bold setaf 6)$*$(tput sgr0)" ; }
+echo_dim_cyan() { echo "$(tput dim setaf 6)$*$(tput sgr0)" ; }
+echo_cyan() { echo "$(tput setaf 6)$*$(tput sgr0)" ; }
+
+echo_dim_magenta() { echo "$(tput dim setaf 5)$*$(tput sgr0)" ; }
+echo_bold_dim_magenta() { echo "$(tput dim bold setaf 5)$*$(tput sgr0)" ; }
+
+echo_red() { echo "$(tput setaf 1)$*$(tput sgr0)" ; }
+echo_bold_red() { echo "$(tput bold setaf 1)$*$(tput sgr0)" ; }
+echo_bold_un_red() { echo "$(tput bold smul setaf 1)$*$(tput sgr0)" ; }
+
+echo_black_bg() { echo "$(tput setab 0)$*$(tput sgr0)" ; }
+echo_white_bg() { echo "$(tput setab 7)$*$(tput sgr0)" ; }
+
+log_error() { echo_bold_red "$*" ; }
+log_warning() { echo_bold_yellow "$*" ; }
+log_info() { echo_cyan "$*" ; }
+log_debug() { echo_bold_un_red "$*" ; }
+log_code() { echo_black_bg "$*" ; }
+log_help() { echo_dim_cyan "$*" ; }

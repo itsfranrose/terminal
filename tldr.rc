@@ -1,0 +1,16 @@
+#!/bin/bash
+
+export TLDR_HEADER='magenta bold underline'
+export TLDR_QUOTE='italic'
+export TLDR_DESCRIPTION='green'
+export TLDR_CODE='red'
+export TLDR_PARAM='blue'
+
+# Possible settings are: black, red, green, yellow, blue, 
+#  magenta, cyan, white, onblue, ongrey, reset, bold, 
+#  underline, italic, eitalic,
+#  default (some variables may not work in some shells).
+
+# zshrc
+[ -f /usr/bin/tldr ] && compctl -k "($( tldr 2>/dev/null --list))" tldr
+complete -W "$(tldr 2>/dev/null --list)" tldr

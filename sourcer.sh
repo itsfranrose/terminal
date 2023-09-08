@@ -1,21 +1,23 @@
 #!/bin/bash
 
-local mainrc_path=$1
+if [ -z "$1" ] && [ -d "$1" ]; then
+    echo "$(tput setaf 2)arg 'dir' must be provided and must exist.$(tput sgr0)"
+    exit 1
+fi
+directory="$1"
 
 # source *.rc files in the current directory
-files=($(find "$mainrc_path" -maxdepth 1 -type f -name "*.rc"))
-if [ ${#files[@]} -gt 0 ]; then # check if there are files
-    for file in "${files[@]}"; do
+files=($(find "$directory" -maxdepth 1 -name "*.rc" -type f))
+for file in "${files[@]}"; do
+    if [ -n "$file" ] && [ -f "$file" ]; then
         source "$file"
-    done
-fi
+    fi
+done
 
-# recursively source any "mainrc" files in *.d directories
-subdirs=($(find "$mainrc_path" -maxdepth 1 -type d -name "*.d" ! -path "$mainrc_path"))
-if [ ${#subdirs[@]} -gt 0 ]; then # check if there are subdirectories
-    for dir in "${subdirs[@]}"; do
-        if [[ -d "$dir" ]]; then
-            sourcer "$dir"
-        fi
-    done
-fi
+# recursively source any *.rc files in *.d directories
+subdirs=($(find "$directory" -maxdepth 1 -name "*.d" ! -path "$directory" -type d))
+for dir in "${subdirs[@]}"; do
+    if [ -n "$dir" ] && [ -d "$dir" ]; then
+        sourcer "$dir"
+    fi
+done

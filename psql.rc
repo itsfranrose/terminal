@@ -1,3 +1,5 @@
+#!/bin/bash
+
 alias psql-system="sudo -u postgres psql"
 stockerpsql_id_seq_reset() {
     name="$1_$2"
@@ -21,6 +23,7 @@ psql-init-db() {
         psql $1 -c "alter role $1 set client_encoding to 'utf8'"
         psql $1 -c "alter role $1 set timezone to 'UTC'"
     else
-        echo "Argument db-name was not provided."
+        log_error "Argument db-name was not provided."
+        return 1
     fi
 }

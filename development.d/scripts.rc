@@ -1,0 +1,19 @@
+#!/bin/bash
+
+alias git-timemachine="$PROJECTS_DIR/git-timemachine/run.sh"
+
+alias py-film="python3 $PROJECTS_DIR/moviescanner/main.py"
+alias py-randspotify="python3 $SCRIPTS_DIR/randspotify.py"
+alias py-extract-sub="python3 $PROJECTS_DIR/extract-subs/main.py"
+
+scripts=$(find $SCRIPTS_DIR -not -path "*/.git/*" -name "*.py" -type f)
+while IFS= read -r script; do
+    pylength=".py"; pylength="${#pylength}"
+    filename="$(basename "$script")"
+    flength="${#filename}"
+    end=$((flength - pylength))
+    filename="${filename:0:$end}"
+    filename="py-$filename"
+
+    alias $filename="old_venv=$VIRTUALENV; workon scripts; /usr/bin/python3 $script; workon $old_venv"
+done <<< "$scripts"

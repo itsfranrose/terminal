@@ -1,0 +1,21 @@
+#!/bin/bash
+
+alias kctl='/usr/local/bin/kubectl --kubeconfig="$HOME/.kube/admin.conf"'
+
+export k8s_nodes=(
+    "192.168.56.101"
+    "192.168.56.102"
+    "192.168.56.103"
+)
+
+# dynamically create K8S1_IP, ssh_k8s1, ...
+counter=1
+for node in ${k8s_nodes[*]}; do
+    ip_var_name="K8S${counter}_IP"
+    declare "${ip_var_name}=\"${node}\""
+
+    alias_name="ssh_k8s${counter}"
+    alias ${alias_name}="ssh vagrant@$node"
+
+    counter=$((counter + 1))
+done

@@ -1,10 +1,43 @@
+#!/bin/bash
+
 export V2RAY_SOCKS="localhost:10808"
-export V2RAY_HTTP="localhost:10807"
+export V2RAY_HTTP="localhost:10809"
 export NEKORAY_PROXY="localhost:10806"
 
-alias v2ray-socks-proxy="export HTTP_PROXY=socks5://$V2RAY_SOCKS && export HTTPS_PROXY=socks5://$V2RAY_SOCKS"
-alias v2ray-http-proxy="export HTTP_PROXY=http://$V2RAY_HTTP && export HTTPS_PROXT=https://$V2RAY_HTTP"
-alias nekoray-socks-proxy="export HTTP_PROXY=socks5://$NEKORAY_PROXY && export HTTPS_PROXY=$NEKORAY_PROXY"
-alias nekoray-http-proxy="export HTTP_PROXY=http://$NEKORAY_PROXY && export HTTPS_PROXY=$NEKORAY_PROXY"
+export_proxy() {
+    export HTTP_PROXY="$2://$1"
+    export http_proxy="$2://$1"
+    export HTTPS_PROXY="$3://$1"
+    export https_proxy="$3://$1"
+}
 
-alias unset-proxy="unset HTTP_PROXY && unset HTTPS_PROXY"
+v2ray-socks-proxy() {
+    export_proxy $V2RAY_SOCKS socks5 socks5
+}
+
+v2ray-http-proxy() {
+    export_proxy $V2RAY_HTTP http https 
+}
+
+v2ray-insecure-http-proxy() {
+    export_proxy $V2RAY_HTTP http http
+}
+
+nekoray-socks-proxy() {
+    export_proxy $NEKORAY_PROXY socks5 socks5
+}
+
+nekoray-http-proxy() {
+    export_proxy $NEKORAY_PROXY http https
+}
+
+nekoray-insecure-http-proxy() {
+    export_proxy $NEKORAY_PROXY http http
+}
+
+unset-proxy() {
+    unset HTTP_PROXY
+    unset HTTPS_PROXY
+    unset http_proxy
+    unset https_proxy
+}

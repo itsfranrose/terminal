@@ -1,0 +1,92 @@
+# tput can be used for colorful text output in bash
+# https://stackoverflow.com/a/20983251
+# man 1 tput
+# man 5 terminfo
+
+# background
+export C_B_BLACK=`tput setaf 0`
+export C_B_RED=`tput setaf 1`
+export C_B_GREEN=`tput setaf 2`
+export C_B_YELLOW=`tput setaf 3`
+export C_B_BLUE=`tput setaf 4`
+export C_B_MAGENTA=`tput setaf 5`
+export C_B_CYAN=`tput setaf 6`
+export C_B_WHITE=`tput setaf 7`
+
+# foreground
+export C_F_BLACK=`tput setab 0`
+export C_F_RED=`tput setab 1`
+export C_F_GREEN=`tput setab 2`
+export C_F_YELLOW=`tput setab 3`
+export C_F_BLUE=`tput setab 4`
+export C_F_MAGENTA=`tput setab 5`
+export C_F_CYAN=`tput setab 6`
+export C_F_WHITE=`tput setab 7`
+
+colored() {
+    local text=""
+    local color=""
+    local bold=false
+    local dim=false
+    local underline=false
+  
+    usage() {
+        echo "Usage: your_function_name <text> <color> [--bold] [--dim] [--underline]"
+    }
+
+    if [ $# -lt 2 ]; then
+        usage
+        return 1
+    fi
+  
+    text="$1"
+    color="$2"
+
+    while [ $# -gt 2 ]; do
+        case "$3" in
+            --bold)
+                bold=true
+                ;;
+            --dim)
+                dim=true
+                ;;
+            --underline)
+                underline=true
+                ;;
+            *)
+                echo "Unknown option: $3"
+                usage
+                return 1
+                ;;
+        esac
+        shift
+    done
+
+    format=""
+    if $bold; then
+        format+='bold '
+    fi
+    if $underline; then
+        format+='smul '
+    fi
+    if $dim;then
+        format+='dim '
+    fi
+    format=$(echo $format | sed 's/ *$//g')
+    
+    format_array=("${(@s: :)format}")
+    echo $format_array
+    formatted_text=""
+    for each in "${format_array[@]}"; do
+        tput_output=$(tput "$each" 2>/dev/null)
+        if [ $? -ne 0 ]; then
+            echo "Unknown capability: $each"
+            return 1
+        fi
+        formatted_text+="$tput_output"
+    done
+    tput_output=$(tput setaf "$color")
+    formatted_text+="$tput_output"
+
+    echo -e "${formatted_text}${text}$(tput sgr0)"
+}

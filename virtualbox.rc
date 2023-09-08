@@ -1,3 +1,5 @@
+#!/bin/bash
+
 export VBOX_LEARN_IP="192.168.1.107"
 alias ssh_learn="ssh debianu@$VBOX_LEARN_IP -p 2200"
 
@@ -6,3 +8,6 @@ alias ssh_ansible="ssh debianu@$VBOX_ANSIBLE_HOST_IP -p 2200"
 
 export VBOX_ANSIBLE_HOST2_IP="192.168.1.100"
 alias ssh_ansible2="ssh debianu@$VBOX_ANSIBLE_HOST_IP -p 2200"
+
+export VBOX_KUBE_MASTER1_IP="192.168.244.66"
+alias ssh_kube_m1="ssh root@$VBOX_KUBE_MASTER1_IP -p 2200"

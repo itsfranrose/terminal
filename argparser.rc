@@ -1,3 +1,5 @@
+#!/bin/bash
+
 argparse() {
     # https://github.com/nhoffman/argparse-bash
     local pyscript=$(cat <<EOF

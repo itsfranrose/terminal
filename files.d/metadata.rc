@@ -1,0 +1,43 @@
+#!/bin/bash
+
+metadata-backup() {
+    if [ -z "$1" ] || [ ! -f "$1" ]; then
+        log_error "arg 'file' must be provided and must exist."
+        return 2
+    fi
+    local file="$1"
+
+    echo "$(stat -c "%a|%G|%U|%x|%y" "$file")"
+}
+
+metadata-restore() {
+    if [ -z "$1" ] || [ ! -f "$1" ]; then
+        log_error "arg 'file' must be provided and must exist."
+        return 2
+    fi
+    local file="$1"
+
+    if [ -z "$2" ]; then
+        log_error "arg 'metadata' must be provided."
+        return 2
+    fi
+    local metadata="$2"
+    
+    get_metadata_item() {
+        local item="$1"
+        echo "$metadata" | cut -d'|' -f${item}
+    }
+
+    perms="`get_metadata_item 1`"
+    chmod "$perms" "$file"
+
+    group="`get_metadata_item 2`"
+    user="`get_metadata_item 3`"
+    chown "$group":"$user" "$file"
+
+    access_time="`get_metadata_item 4`"
+    touch -d "$access_time" "$file"
+
+    mod_time="`get_metadata_item 5`"
+    touch -m -d "$mod_time" "$file"
+}

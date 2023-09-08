@@ -1,3 +1,5 @@
+#!/bin/bash
+
 alias shut-down="shutdown +5"
 
 userscat() {

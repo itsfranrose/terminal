@@ -1,0 +1,29 @@
+#!/bin/bash
+
+dl_vagrant_box() {
+    # https://gist.github.com/firmanelhakim/77b6ee7fb50883155eeefc9e0dc10b9b
+
+    if [ "$1" = "--help" ]; then
+        log_help "example: dl_vagrant_box generic ubuntu2204 4.2.16 virtualbox"
+        exit 0
+    fi
+
+    local user="$1"
+    local box="$2"
+    local version="$3"
+    local provider="$4"
+    filename="$user-$box-$version-$provider.box"
+    dldir="$DOWNLOADS_DIR"
+    dl --http-proxy=http://localhost:10809 --https-proxy=http://localhost:10809 --out="$filename" \
+        "https://app.vagrantup.com/$user/boxes/$box/versions/$version/providers/virtualbox.box"
+    log_help """
+Download complete: $dldir/$filename
+run the following commands:
+- vagrant box add $user/$box $dldir/$filename
+- cd ~/.vagrant.d/boxes/$user-VAGRANTSLASH-$box/
+- mkdir -p $version
+- mv 0/* $version/
+- echo -n \"https://app.vagrantup.com/$user/boxes/$box\" > metadata_url
+- vagrant box list
+"""
+}

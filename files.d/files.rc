@@ -1,18 +1,28 @@
+#!/bin/bash
+
 export VISUAL=vim
 export EDITOR="$VISUAL"
 
-alias dirsize="du -d 1 -h | sort -k1,1rn"
-alias filesize="du -sh"
+fsize() {
+    if [ -n "$1" ] && [ -e "$1" ]; then
+        local dir="$1"
+    elif [ -n "$1" ] && [ "$1" = "--list" ]; then
+        local list="true"
+        local dir="."
+    else
+        local dir="."
+    fi
+    if [ -n "$2" ] && [ "$2" = "--list" ]; then
+        local list="true"
+    fi
+    if [ "$list" = "true" ]; then
+        du -hd 1 "$dir"
+    else
+        du -sh "$dir"
+    fi
+}
+
 alias opendir="setsid --fork nautilus --new-window 1>/dev/null 2>/dev/null"
-
-#todo: make into function with args
-alias finddir="find . -type d -name"
-
-#todo: make into function with args
-alias findfile="find . -type f -name"
-
-# todo: make into function
-grepfile="grep -R -n -H -C 5 --exclude-dir={.git}"
 
 zzz="""
 find a way to make a mechanism that supports writing help-texts for
@@ -20,17 +30,35 @@ find a way to make a mechanism that supports writing help-texts for
  themselves, and also available for search through a command.
 """
 
-# alias cp="cp -rvp"
-alias cp="cp -av"
+alias cp="cp -av"  # deprecated: cp -rvp
 alias mv="mv -v"
 
 alias pdfview="evince"
 alias txt="gnome-text-editor"
 csview() {
+    if [ -z "$1" ] || [ ! -f "$1" ]; then
+        log_erro "arg 'file' must be provided and must exist."
+        return 1
+    fi
     local file="$1"
     cat "$file" | sed -e 's/,,/, ,/g' | column -s, -t | less -#5 -N -S
 }
 
 alias bat="batcat"
-alias ls="exa"
 alias desktop-files="{ ls -d $HOME_DIR/.local/share/applications/* && ls -d1 /usr/share/applications/* }"
+
+# diff
+# https://stackoverflow.com/questions/4997693/given-two-directory-trees-how-can-i-find-out-which-files-differ-by-content
+alias diffdir="diff --brief --recursive --new-file"
+alias diffdirgui="meld"
+
+# ls
+alias ls="exa"
+alias la="ls -a"     # all files
+alias ll="ls -l"     # long list
+alias lla="ls -la"   # long list all files
+alias lt="ls -lt"    # long list and sort newest first
+alias lrt="ls -lrt"  # long list and sort oldest first
+alias l1="ls -1"     # list on one column
+alias la1="ls -a1"   # all files on one column
+alias lla1="ls -la1" # long list all files on one column

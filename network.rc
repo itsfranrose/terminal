@@ -1,3 +1,5 @@
+#!/bin/bash
+
 tsocks-switchconf() {
     local config_dir="/etc"
     local symlink_file="$config_dir/tsocks.conf"
@@ -10,14 +12,24 @@ tsocks-switchconf() {
     # Switch the symlink target
     if [ "$current_target" = "$target_file1" ]; then
         sudo ln -sf "$target_file2" "$symlink_file"
-        echo "Switched symlink to $target_file2"
+        log_info "Switched symlink to $target_file2"
     else
         sudo ln -sf "$target_file1" "$symlink_file"
-        echo "Switched symlink to $target_file1"
+        log_info "Switched symlink to $target_file1"
     fi
 }
+alias tsocks-conf="ls -l /etc/tsocks.conf"
 
 alias nmap-netscan="nmap -sn" # 192.168.0.0/24, or 0.0.0.0
 
 alias dl="aria2c --conf-path=$HOME_DIR/.aria2c"
+dl-mul() {
+    username="$(cat "$CREDENTIALS_DIR"/multishare.username)"
+    passwd="$(view-cred "$CREDENTIALS_DIR"/multishare.passwd.enc --cat 2>/tmp/enc)"
+    if [[ "$(cat /tmp/enc)" =~ ^bad\ decrypt.* ]]; then
+        log_error "wrong password provided for multishare.passwd"
+        return 2
+    fi
+    aria2c --conf-path="$HOME_DIR"/.aria2c --http-user="$username" --http-passwd="$passwd" $*
+}
 alias dl-server="aria2c --conf-path=$HOME_DIR/.aria2c --enable-rpc"
