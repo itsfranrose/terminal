@@ -1,0 +1,19 @@
+#!/bin/bash
+
+pomo-calc() {
+	local total="$1"
+	local hours=$(("$total"/60))
+	minutes=$(("$total" - "$hours" * 60))
+	
+	local loops="$(("$total" / 90))"
+	local remaining="$(("$total" - "$loops" * 90))"
+	local total_pomo=$(("$loops" * $((90 + 20 + 30))))
+	if   [ "$remaining" -le 30 ]; then
+		total_pomo=$(("$total_pomo" + "$remaining"))
+	elif [ "$remaining" -le 60 ]; then
+		total_pomo=$(("$total_pomo" + "$remaining" + 10))
+	elif [ "$remaining" -le 90 ]; then
+		total_pomo=$(("$total_pomo" + "$remaining" + 20))
+	fi
+	echo "$total_pomo"
+}

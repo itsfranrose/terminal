@@ -1,21 +1,80 @@
 #!/bin/bash
 
 alias kctl='/usr/local/bin/kubectl --kubeconfig="$HOME/.kube/admin.conf"'
+alias k='kubecolor --kubeconfig="$HOME/.kube/admin.conf"'
 
 export k8s_nodes=(
-    "192.168.56.101"
-    "192.168.56.102"
-    "192.168.56.103"
+    192.168.56.101
+    192.168.56.102
+    192.168.56.103
 )
 
 # dynamically create K8S1_IP, ssh_k8s1, ...
 counter=1
 for node in ${k8s_nodes[*]}; do
     ip_var_name="K8S${counter}_IP"
-    declare "${ip_var_name}=\"${node}\""
+    declare "${ip_var_name}=${node}"
 
     alias_name="ssh_k8s${counter}"
     alias ${alias_name}="ssh vagrant@$node"
 
     counter=$((counter + 1))
 done
+
+find-pod-name() {
+    if [ -z "$1" ]; then
+        log_error "arg 'pattern' must be provided."
+        return 2
+    fi
+    local pattern="$1"
+    shift
+
+    if [ -n "$1" ] && ([ "$1" = "-n" ] || [ "$1" = "--namespace" ]) && [ -n "$2" ]; then
+        local namespace="$2"
+        shift 2
+    else
+        local namespace="default"
+    fi
+
+    pods=$(kctl get pods $* | cut -d' ' -f1)
+    echo "$pods" | grep -E "$pattern"
+}
+
+pod-shell() {
+    if [ -z "$1" ]; then
+        log_error "arg 'pod_name' must be provided."
+        return 2
+    fi
+    local pod_name="$1"
+    shift
+
+    if [ -n "$1" ] && [ "$1" = "--container" ] && [ -n "$2" ]; then
+        local container_name="$2"
+        shift 2
+    else
+        local container_name=""
+    fi
+    
+    if [ -n "$1" ] && ([ "$1" = "-n" ] || [ "$1" = "--namespace" ]) && [ -n "$2" ]; then
+        local namespace="$2"
+        shift 2
+    else
+        local namespace="default"
+    fi
+
+    if ! kctl get pods | cut -d' ' -f1 | grep -E "^${pod_name}$" >/dev/null 2>&1; then
+        log_info "find-pod-name..."
+        pod_name=$(find-pod-name "$pod_name")
+    fi
+    if ! kctl get pods | cut -d' ' -f1 | grep -E "^${pod_name}$" >/dev/null 2>&1; then
+        log_error "pod not found."
+        return 2
+    fi
+    
+    kctl exec -ti "$pod_name" -- bash
+}
+
+k-getall() {
+    local resources=$(k api-resources --verbs=list -o name | tr "\n" ,)
+    k get ${resources%?} --show-kind=true --ignore-not-found --force-colors $@ | less -r
+}

@@ -32,3 +32,58 @@ docker-startup() {
         sudo systemctl $mode $unit
     done
 }
+
+docker-proxy() {
+# /etc/systemd/system/docker.service.d/proxy.conf
+#TODO
+#  1 [Service]
+#  2 Environment="HTTP_PROXY=socks5://localhost:10808"
+#  3 Envitonment="HTTPS_PROXY=socks5://localhost:10808"
+}
+
+docker-rm-tagged() {
+    if [ -z "$1" ]; then
+        log_error "arg 'tag' must be provided."
+        return 2
+    fi
+    local tag="$1"
+    local lines="$(docker images | grep -F "$1")"
+    if [ -z "$lines" ]; then return 0; fi
+
+    while IFS= read -r line; do
+        local image="$(echo $line | awk -F' ' '{print $1}'):$(echo $line | awk -F' ' '{print $2}')"
+        docker image rm "$image"
+    done <<< "${lines}"
+}
+
+docker-export-images() {
+    if [ -n "$1" ] && ([ "$1" = "--filter" ] || [ "$1" = "-f" ]) && [ -n "$2" ]; then
+        local gfilter="$2"
+        shift 2
+    else
+        local gfilter=""
+    fi
+    if [ -n "$1" ] && ([ "$1" = "--dest-dir" ] || [ "$1" = "-d" ]) && [ -n "$2" ]; then
+        local dest="$2"
+        shift 2
+    else
+        log_error "arg '--dest-dir' must be provided."
+        return 2
+    fi
+
+    lines="$(docker images | grep -v -E 'REPOSITORY *TAG *IMAGE ID *CREATED * *SIZE')"
+    if [ -n "$gfilter" ]; then
+        lines="$(echo $lines | grep "$gfilter")"
+    fi
+
+    counter=1
+    max=$(echo "$lines" | wc -l)    
+    while IFS= read -r line; do
+        log_info "exporting $counter/$max"
+        log_info $'\t\t'"$image"
+        image="$(echo "$line" | awk -F' ' '{print $1}'):$(echo "$line" | awk -F' ' '{print $2}')"
+        filename="$(echo "$image" | sed s@"/"@"-"@g | sed s/":"/"-"/g)"
+        docker save -o "$dest"/"$filename" "$image"
+        counter=$((counter + 1))
+    done <<< "${lines}"
+}

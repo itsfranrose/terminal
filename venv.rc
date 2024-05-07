@@ -4,4 +4,58 @@ export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 export WORKON_HOME="$HOME/.venvs"
 source /usr/local/bin/virtualenvwrapper.sh
 
-workon system_venv
+workon system-venv
+
+venvs-backup-modules() {
+    if [ -z "$1" ]; then
+        log_error "arg 'dest' must be provided."
+        return 2
+    fi
+    local dest="$1"
+    mkdir -p "$dest"
+
+    local venvs=$(lsvirtualenv | grep -E -o '[0-9a-zA-Z]*[-_]*[0-9a-zA-Z]*')
+    local current_venv=$(basename "$VIRTUAL_ENV")
+    
+    local counter=1
+    local max=$(echo "$venvs" | wc -l)
+    while IFS= read -r venv; do
+        log_info "exporting $counter/$max venv $venv"
+        workon $venv
+        pip freeze > "$dest"/"$venv".req.txt
+        counter=$((counter + 1))
+    done <<< "$venvs"
+    workon $current_venv
+}
+
+venvs-restore-modules() {
+    if [ -z "$1" ]; then
+        log_error "arg 'src' must be provided."
+        return 2
+    fi
+    local src="$1"
+    shift
+    
+    local current_venv=$(basename "$VIRTUAL_ENV")
+    local venvs=($(ls -1 "$src"))
+    local counter=1
+    local max=$(echo "$venvs" | wc -l)
+    for venv in ${venvs[@]}; do
+        venv="${venv/.req.txt/}"
+        log_info "installing requirements $counter/$max venv $venv"
+        mkvirtualenv "$venv" 2>/tmp/venv.log >/dev/null
+        if [ $? -ne 0 ]; then
+            log_error "error: $venv"
+            log_error "checkout /tmp/venv.log"
+        fi
+        workon "$venv"
+        if [ "$1" = "--proxy" ]; then
+            local proxy="--proxy socks5://127.0.0.1:10808"
+        else
+            local proxy=""
+        fi
+        pip $proxy install --verbose -r "$src"/"$venv".req.txt
+        counter=$((counter + 1))
+    done
+    workon $current_venv
+}

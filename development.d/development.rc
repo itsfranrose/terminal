@@ -25,7 +25,7 @@ gnome-extension-install() {
     local file="$1"
     MY_EXT_UUID=`unzip -p $file metadata.json | jq -r ".uuid"`
     log_info $MY_EXT_UUID
-    unzip $file -d "$HOME_DIR/.local/share/gnome-shell/extensions/$MY_EXT_UUID"
+    unzip $file -d "$HOME/.local/share/gnome-shell/extensions/$MY_EXT_UUID"
 }
 
 gnome-shell-reset() {

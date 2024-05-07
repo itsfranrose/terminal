@@ -15,6 +15,10 @@ v2ray-socks-proxy() {
     export_proxy $V2RAY_SOCKS socks5 socks5
 }
 
+v2ray-http-to-socks-proxy() {
+    export_proxy $V2RAY_SOCKS http https
+}
+
 v2ray-http-proxy() {
     export_proxy $V2RAY_HTTP http https 
 }

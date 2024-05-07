@@ -13,3 +13,5 @@ command-check() {
         return 1
     fi
 }
+
+alias copy-to-clipboard="xclip -selection clipboard"

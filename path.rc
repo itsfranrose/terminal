@@ -1,0 +1,33 @@
+#!/bin/bash
+
+export PATH="$PATH:$HOME/.local/bin"
+
+# common directories
+export HOME_DIR="/home/francis"
+export BEDROOM_DIR="$HOME_DIR/Bedroom"
+export CORRIDOR_DIR="$HOME_DIR/Corridor"
+export STUDIO_DIR="$HOME_DIR/Studio"
+export THINKTANK_DIR="$HOME_DIR/ThinkTank"
+
+# Studio
+export SCRIPTS_DIR="$STUDIO_DIR/Scripts"
+export PROJECTS_DIR="$STUDIO_DIR/Projects"
+export VBOX_DIR="$STUDIO_DIR/VBox"
+export CREDENTIALS_DIR="$STUDIO_DIR/Credentials"
+export TEMPLATES_DIR="$STUDIO_DIR/Templates"
+export TERMINAL_DIR="$STUDIO_DIR/Terminal"
+
+# Bedroom
+export DESKTOP_DIR="$BEDROOM_DIR/Desktop"
+export DOWNLOADS_DIR="$BEDROOM_DIR/Downloads"
+export BACKUPS_DIR="$BEDROOM_DIR/Backups"
+export DOCUMENTS_DIR="$BEDROOM_DIR/Documents"
+export PICTURES_DIR="$BEDROOM_DIR/Pictures"
+export VIDEOS_DIR="$BEDROOM_DIR/Videos"
+
+export PATH=$PATH:/usr/local/go/bin
+
+# sources
+alias srcsh="source $TERMINAL_DIR/.terminalrc"
+alias srczsh="source $HOME/.zshrc"
+alias srcbash="source $HOME/.bashrc"

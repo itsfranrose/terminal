@@ -1,13 +1,6 @@
 #!/bin/bash
 
 alias psql-system="sudo -u postgres psql"
-stockerpsql_id_seq_reset() {
-    name="$1_$2"
-    name_quoted="'"$name"'"
-    echo "BEGIN;
-    SELECT setval(pg_get_serial_sequence($name_quoted),'id'), coalesce(max("id"), 1), max("id") IS NOT null) FROM $name;
-    COMMIT;" | psql stocker
-}
 
 psql-init-db() {
     if [ -n "$1" ]; then

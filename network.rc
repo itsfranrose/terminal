@@ -33,3 +33,4 @@ dl-mul() {
     aria2c --conf-path="$HOME_DIR"/.aria2c --http-user="$username" --http-passwd="$passwd" $*
 }
 alias dl-server="aria2c --conf-path=$HOME_DIR/.aria2c --enable-rpc"
+alias dl-server-proxy="aria2c --conf-path=$HOME_DIR/.aria2c --enable-rpc --https-proxy=http://127.0.0.1:10806"
