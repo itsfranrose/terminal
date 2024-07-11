@@ -39,6 +39,7 @@ docker-proxy() {
 #  1 [Service]
 #  2 Environment="HTTP_PROXY=socks5://localhost:10808"
 #  3 Envitonment="HTTPS_PROXY=socks5://localhost:10808"
+echo ""
 }
 
 docker-rm-tagged() {

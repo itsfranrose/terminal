@@ -12,5 +12,5 @@ export TLDR_PARAM='blue'
 #  default (some variables may not work in some shells).
 
 # zshrc
-[ -f /usr/bin/tldr ] && compctl -k "($( tldr 2>/dev/null --list))" tldr
-complete -W "$(tldr 2>/dev/null --list)" tldr
+# [ -f /usr/bin/tldr ] && compctl -k "($( tldr 2>/dev/null --list))" tldr
+# complete -W "$(tldr 2>/dev/null --list)" tldr

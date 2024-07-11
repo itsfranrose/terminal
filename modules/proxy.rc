@@ -1,9 +1,5 @@
 #!/bin/bash
 
-export V2RAY_SOCKS="localhost:10808"
-export V2RAY_HTTP="localhost:10809"
-export NEKORAY_PROXY="localhost:10806"
-
 export_proxy() {
     export HTTP_PROXY="$2://$1"
     export http_proxy="$2://$1"
@@ -37,6 +33,42 @@ nekoray-http-proxy() {
 
 nekoray-insecure-http-proxy() {
     export_proxy $NEKORAY_PROXY http http
+}
+
+warp-socks-proxy() {
+	export_proxy $WARP_PROXY socks5 socks5
+}
+
+warp-http-proxy() {
+	export_proxy $WARP_PROXY http https
+}
+
+warp-insecure-http-proxy() {
+	export_proxy $WARP_PROXY http http
+}
+
+warp-plus-socks-proxy() {
+	export_proxy $WARP_PLUS_PROXY socks5 socks5
+}
+
+warp-plus-http-proxy() {
+	export_proxy $WARP_PLUS_PROXY http https
+}
+
+warp-plus-insecure-http-proxy() {
+	export_proxy $WARP_PLUS_PROXY http http
+}
+
+hiddify-socks-proxy() {
+    export_proxy $HIDDIFY_PROXY socks5 socks5
+}
+
+hiddify-http-proxy() {
+    export_proxy $HIDDIFY_PROXY http https
+}
+
+hiddify-insecure-http-proxy() {
+    export_proxy $HIDDIFY_PROXY http http
 }
 
 unset-proxy() {

@@ -1,35 +1,12 @@
 #!/bin/bash
 
-alias ipy="python3 -c 'import IPython;
-IPython.terminal.ipapp.launch_new_instance()'"
-
-djangoshell() {
+djsh() {
     if [ ! -e "$1" ]; then
         log_error "arg 'djdir' not provided."
         return 1
     fi
     local djdir="$PROJECTS_DIR/$1"
     python3 $djdir/manage.py shell -i ipython
-}
-alias djsh="djangoshell"
-
-gnome-extension-install() {
-    if [ -z "$1" ]; then
-        log_error "arg 'file' not provided."
-        return 2
-    elif [ ! -e "$1" ]; then
-        log_error "arg 'file' does not exist."
-        return 2
-    fi
-
-    local file="$1"
-    MY_EXT_UUID=`unzip -p $file metadata.json | jq -r ".uuid"`
-    log_info $MY_EXT_UUID
-    unzip $file -d "$HOME/.local/share/gnome-shell/extensions/$MY_EXT_UUID"
-}
-
-gnome-shell-reset() {
-    killall -SIGQUIT gnome-shell
 }
 
 pycache-clean() {
@@ -44,8 +21,7 @@ pycache-clean() {
     find "$dir" -type d -name "__pycache__" -exec rm -rf {} +
 }
 
-alias git-timemachine="$PROJECTS_DIR/git-timemachine/run.sh"
-
+# TODO
 zzz="""
 write functions that categorize and then act upon projects define in
  ~/Bedroom/Projects

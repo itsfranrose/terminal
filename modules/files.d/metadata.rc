@@ -41,3 +41,9 @@ metadata-restore() {
     mod_time="`get_metadata_item 5`"
     touch -m -d "$mod_time" "$file"
 }
+
+metadata-copy() {
+	[ -z "$1" -o ! -f "$1" ] && log_error "$0: arg file1 must be provided and must exist" && return 1
+	[ -z "$2" -o ! -f "$2" ] && log_error "$0: arg file2 must be provided and must exist" && return 1
+	metadata-restore "$2" "$(metadata-backup "$1")"
+}

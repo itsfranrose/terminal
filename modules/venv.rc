@@ -1,11 +1,5 @@
 #!/bin/bash
 
-export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-export WORKON_HOME="$HOME/.venvs"
-source /usr/local/bin/virtualenvwrapper.sh
-
-workon system-venv
-
 venvs-backup-modules() {
     if [ -z "$1" ]; then
         log_error "arg 'dest' must be provided."

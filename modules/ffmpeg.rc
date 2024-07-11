@@ -1,0 +1,19 @@
+#!/bin/bash
+
+ffmpeg-cut() {
+	start_time="$1"
+	end_time="$2"
+	input_file="$3"
+	output="$4"
+	[ -z "$output" ] && output="$(pwd)"
+	ffmpeg -i "$input_file" -ss "$start_time" -to "$end_time" -map 0 "$output"
+}
+
+ffmpeg-copy() {
+	start_time="$1"
+	end_time="$2"
+	input_file="$3"
+	output="$4"
+	[ -z "$output" ] && output="$(pwd)"
+	ffmpeg -i "$input_file" -ss "$start_time" -to "$end_time" -c:v copy -map 0 "$output"
+}

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# TODO
+zzz="""
+find a way to make a mechanism that supports writing help-texts for
+ things written in Studio/Terminal. The help text should be available through the files
+ themselves, and also available for search through a command.
+"""
+
+lfpaste() {
+	[ -z "$1" ] && return 1
+	lfid="$1"
+	shift
+	[ -z "$1" ] && return 1
+	dst="$1"
+	shift
+	[ ! -d "$dst" ] && return 1
+
+	file=~/.local/share/lf/files
+	[ ! -f "$file" ] && lf -remote "send $lfid :echoerr no files were selected" && return 1
+	mode="$(sed -n '1p' "$file")"
+	args="$(sed -n '2,$p' "$file" | while read line; do echo -n "\"$line\" "; done)"
+	cmd="rsync -avh --no-links --no-devices --no-specials --partial --progress --info=progress2,stats --update -- $args \"$dst\" | stdbuf -i0 -o0 -e0 tr '\r' '\n'"
+    
+	eval "$cmd"
+	if [ $? -ne 0 ]; then
+		lf -remote "send $lfid :echoerr lfpaste: $err"
+	else
+		rm "$file"
+		lf -remote "send clear"
+		[ "$mode" = "move" ] && eval "rm -rf $args"
+	fi
+	return 0
+}
+
+csview() {
+    if [ -z "$1" ] || [ ! -f "$1" ]; then
+        log_erro "arg 'file' must be provided and must exist."
+        return 1
+    fi
+    local file="$1"
+    cat "$file" | sed -e 's/,,/, ,/g' | column -s, -t | less -#5 -N -S
+}

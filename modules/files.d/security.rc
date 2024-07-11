@@ -1,0 +1,145 @@
+#!/bin/bash
+
+encrypt-file() {
+	[ -z "$1" ] && log_error "$0: arg infile must be provided" && return 1
+	local infile="$(realpath "$1")"
+	[ $? -ne 0 ] && return 1
+	[ -z "$2" ] && log_error "$0: arg outfile must be provided" && return 1
+	local outfile="$(realpath "$2")"
+	[ $? -ne 0 ] && return 1
+    openssl enc -aes-256-cbc -salt -pbkdf2 -out "$outfile" -in "$infile"
+}
+
+decrypt-file() {
+	[ -z "$1" ] && log_error "$0: arg infile must be provided" && return 1
+	local infile="$(realpath "$1")"
+	[ $? -ne 0 ] && return 1
+	[ -z "$2" ] && log_error "$0: arg outfile must be provided" && return 1
+	local outfile="$(realpath "$2")"
+	[ $? -ne 0 ] && return 1
+    openssl enc -aes-256-cbc -pbkdf2 -d -in "$infile" -out "$outfile"
+}
+
+encfile() {
+	[ -z "$1" ] && log_error "$0: arg file must be provided" && return 1
+	local file="$(realpath "$1")"
+	[ $? -ne 0 ] && return 1
+	local filedir="$(dirname "$file")"
+	[[ ! -f "$file" || ! -w "$file" ]] && log_error "$0: problem with directory or file" && return 1
+	local outfile="${file}.enc"
+	
+	local tempdir=/tmp/cred
+	mkdir -p "$tempdir"
+	local temp1="$(mktemp -p "$tempdir")"
+	local temp2="$(mktemp -p "$tempdir")"
+
+	local metadata="$(metadata-backup "$file")"
+	encrypt-file "$file" "$temp1"
+	[ $? -ne 0 ] && return $?
+	decrypt-file "$temp1" "$temp2"
+	
+	if ! diff "$temp2" "$file" 2>&1 1>/dev/null; then
+		log_error "$0: files do not match, aborting..."
+		rm -rf "$tempdir"
+		return 1
+	fi
+	
+	mv "$temp1" "$outfile"
+	rm -rf "$tempdir" "$file"
+	metadata-restore "$outfile" "$metadata"
+	log_info "$0: encrypted $(basename "$file") -> $(basename "$outfile")"
+}
+
+decfile() {
+	[ -z "$1" ] && log_error "$0: arg file must be provided" && return 1
+	local file="$(realpath "$1")"
+	[ $? -ne 0 ] && return 1
+	local filedir="$(dirname "$file")"
+	[[ ! -f "$file" || ! -r "$file" ]] && log_error "$0: problem with directory or file" && return 1
+	[[ ! "$file" = *.enc ]] && log_error "$0: filename must end with .enc" && return 1
+
+	local metadata="$(metadata-backup "$file")"
+	local outfile="${file%.enc}"
+	decrypt-file "$file" "$outfile"
+	[ $? -ne 0 ] && return $?
+	metadata-restore "$outfile" "$metadata"
+	rm -f "$file"
+	log_info "$0: decrypted $(basename "$file") -> $(basename "$outfile")"
+}
+
+# credentials
+github-access-token() {
+    local github_access_token="$CREDENTIALS_DIR/github-access-token"
+    decrypt-file "$github_access_token.enc" "/tmp/github.dec"
+	if [ "$1" = "--copy" -o "$1" = "-c" ]; then
+		cat "/tmp/github.dec" | xclip -selection clipboard
+	else
+	    cat "/tmp/github.dec"
+	fi
+    rm -f "/tmp/github.dec" > /dev/null 2>&1
+}
+
+2fa-backup-code() {
+    local credfile="$CREDENTIALS_DIR/2fa-backup-codes.json"
+	local tempdir=/tmp/cred
+	mkdir -p "$tempdir"
+    local tempfile="$(mktemp -p "$tempdir")"
+    decrypt-file "$credfile.enc" "$tempfile"
+
+	local arg=""
+	[ -n "$1" ] && arg=$(python3 -c "print('$1'.capitalize())")
+	cat "$tempfile" | jq ".$arg" | less
+    rm -f "$tempfile" > /dev/null 2>&1
+}
+
+view-cred() {
+	local printer=less
+	local file
+	while [ $# -gt 0 ]; do
+		case "$1" in
+			-*)
+				if [ "$1" = "--cat" -o "$1" = "-cat" ]; then
+					printer="cat"
+				fi
+				shift
+				;;
+			*)
+				file="$1"
+				shift
+				;;
+		esac
+
+	done
+
+	[ -z "$file" ] && log_error "$0: arg file must be provided" && return 1
+	file="$(realpath "$file")"
+	[ $? -ne 0 ] && return 1
+	[ ! -f "$file" ] && log_error "$0: file doesn't exist" && return 1
+
+    local decfile="/tmp/file.dec"
+    decrypt-file "$file" "$decfile"
+    $printer "$decfile"
+    rm -f "$decfile" > /dev/null 2>&1
+}
+
+mod-cred() {
+	local file="$1"
+	[ -z "$file" ] && log_error "$0: arg file must be provided" && return 1
+	file="$(realpath "$file")"
+	[ $? -ne 0 ] && return 1
+	[ ! -f "$file" ] && log_error "$0: file doesn't exist" && return 1
+	[ ! -w "$file" ] && log_error "$0: file is not writable" && return 1
+	
+	local decfile="$(mktemp)"
+	decrypt-file "$file" "$decfile"
+	metadata-copy "$file" "$decfile"
+	local last_mod="$(stat -c "%Y" "$file")"
+	"$EDITOR" "$decfile"
+	if [ "$(stat -c "%Y" "$decfile")" -gt "$last_mod" ]; then
+		rm -f "$file"
+		file="${file%.enc}"
+		cp "$decfile" "$file"
+		encfile "$file"
+	fi
+	rm -f "$decfile"
+}

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: rewrite it
+
 v2ray-switchconf() {
     local config_dir="/usr/local/etc/v2ray"
     local symlink_file="$config_dir/config.json"

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-alias psql-system="sudo -u postgres psql"
-
 psql-init-db() {
     if [ -n "$1" ]; then
         psql postgres -c "create database $1;"
