@@ -1,7 +1,0 @@
-#!/usr/bin/zsh
-
-cfdir="$(realpath "$(dirname "$0")")"
-srcfiles="$(find "$cfdir" \( -type d ! -name '*.d' ! -path "$cfdir" -prune \) -o \
-  				             -type f   -name '*.env'           -print | sort)"
-eval "$(echo "$srcfiles" | xargs -I{} cat "{}")"
-unset cfdir srcfiles

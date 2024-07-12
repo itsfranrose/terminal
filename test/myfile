@@ -1,9 +1,0 @@
-#!/usr/bin/zsh
-
-echo "in file" >> /tmp/term.log
-
-filefunc() {
-	echo "in filefunc" >> /tmp/term.log
-}
-
-echo "after filefunc def" >> /tmp/term.log

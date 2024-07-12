@@ -1,14 +1,15 @@
 ### Description
-This repo contains my terminal shell scripts located at ~/Studio/Terminal.  
+This repo contains my terminal shell scripts located at ~/Studio/Terminal.
 
-`sourcer.sh` is a bash script that if called, given a directory as a positional argument, 
-it would `source` bash files that their name ends with `.rc` found within directories that end with `.d`, **recursively**.  
+I source env at login in `.profile`.
+be warned that since I mainly use zsh, there may be some code that is only zsh compatible, but I doubt that that's the case; usually my codes are bash-like.
 
-If `sourcer.sh` were called from the `.bashrc` file or the `.zshrc` file, every `*.rc` bash script would run 
-and the opened termianl would have access to all the result produced by them.
+`src.zsh` calls the appropriate script from `src/`, and each script sources the appropriate code and takes the code root directory and `-v` (verbose) as args.
+for nested scripts in each section, sourcers only go down in directories that end with `.d` so as to allow some development flexibility; and also the files that each sourcer looks for should end with - `.env` for environment variables in `env/`, `.zsh` for aliases, and `.rc` for modules.
+
+`zim.zsh` just sources the aliases and modules and integrates in `zimfw`.
 
 ### TODOS
 - cleanup deprecated directory
-- migrate the TODOS to this readme file
 - create documentation for the scripts.
     - Or dynamically add those documentation to here, or another relevant readme file.
