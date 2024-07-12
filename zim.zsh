@@ -16,8 +16,8 @@ _terminal_src_arg_zero="$0"
 	fi
 	
 	# source "$thisdir"/src.zsh env
-	source "$thisdir"/src.zsh aliases
-	source "$thisdir"/src.zsh modules
+	source "$thisdir"/src.zsh aliases $@
+	source "$thisdir"/src.zsh modules $@
 } "$@"
 
 unset _terminal_src_arg_zero

@@ -17,15 +17,16 @@ _terminal_src_arg_zero="$0"
 	
 	case "$1" in
 		env)
-			source "$thisdir"/src/env.zsh "${thisdir}/env"
+			shift
+			source "$thisdir"/src/env.zsh "${thisdir}/env" "$@"
 			;;
 		aliases)
 			shift
-			source "$thisdir"/src/aliases.zsh "${thisdir}/aliases" $@
+			source "$thisdir"/src/sourcer.zsh "${thisdir}/aliases" zsh $@
 			;;
 		modules)
 			shift
-			source "$thisdir"/src/modules.zsh "${thisdir}/modules" $@
+			source "$thisdir"/src/sourcer.zsh "${thisdir}/modules" rc $@
 			;;
 	esac
 } "$@"
