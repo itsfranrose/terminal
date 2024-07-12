@@ -38,6 +38,11 @@ case "$1" in
 			"$thisdir"/aliases/.zwc.d \
 			"$thisdir"/modules/.zwc.d
 		;;
+	dev)
+		source "$thisdir"/src/eval-dev.zsh "$thisdir"/env env
+		source "$thisdir"/src/eval-dev.zsh "$thisdir"/aliases zsh
+		source "$thisdir"/src/eval-dev.zsh "$thisdir"/modules rc
+		;;
 esac
 
 unset thisdir
