@@ -1,34 +1,43 @@
 #!/usr/bin/zsh
 
-_terminal_src_arg_zero="$0"
+thisdir="$(realpath "$(dirname "$0")")"
 
-() {
-	thisdir="$(realpath "$(dirname "$_terminal_src_arg_zero")")"
-	thisfile="${thisdir}/$(basename "$_terminal_src_arg_zero")"
+case "$1" in
+	env)
+		shift
+		source "$thisdir"/src/eval.zsh "${thisdir}/env" env
+		;;
+	aliases)
+		shift
+		source "$thisdir"/src/eval.zsh "${thisdir}/aliases" zsh
+		;;
+	modules)
+		shift
+		source "$thisdir"/src/eval.zsh "${thisdir}/modules" rc
+		;;
+	compile)
+		thisfile="${thisdir}/$(basename "$0")"
+		compfile="$thisdir"/src/compile.zsh
+		evalfile="$thisdir"/src/eval.zsh
 
-	# compile this file
-	if [ ! -f "$thisfile".zwc ] || [[ ! "$thisfile".zwc -nt "$thisfile" ]]; then
-		zcompile -UR "$thisfile"
-		source "$thisfile"
-		unset _terminal_src_arg_zero
-		return 2>/dev/null
-		exit
-	fi
-	
-	case "$1" in
-		env)
-			shift
-			source "$thisdir"/src/env.zsh "${thisdir}/env" "$@"
-			;;
-		aliases)
-			shift
-			source "$thisdir"/src/sourcer.zsh "${thisdir}/aliases" zsh $@
-			;;
-		modules)
-			shift
-			source "$thisdir"/src/sourcer.zsh "${thisdir}/modules" rc $@
-			;;
-	esac
-} "$@"
+		[[ ! "$thisfile".zwc -nt "$thisfile" ]] && zcompile -UR "$thisfile"                && echo "- compiling $thisfile"
+		[[ ! "$compfile".zwc -nt "$compfile" ]] && zcompile -UR "$compfile"                && echo "- compiling $compfile"
+		[[ ! "$evalfile".zwc -nt "$evalfile" ]] && zcompile -UR "$evalfile"                && echo "- compiling $evalfile"
+		
+		"$compfile" "$thisdir"/env env
+		"$compfile" "$thisdir"/aliases zsh
+		"$compfile" "$thisdir"/modules rc
+		;;
+	clean)
+		thisfile="${thisdir}/$(basename "$0")"
+		rm -v -rf \
+			"$thisfile".zwc \
+			"$thisdir"/src/compile.zsh.zwc \
+			"$thisdir"/src/eval.zsh.zwc \
+			"$thisdir"/env/.zwc.d \
+			"$thisdir"/aliases/.zwc.d \
+			"$thisdir"/modules/.zwc.d
+		;;
+esac
 
-unset _terminal_src_arg_zero
+unset thisdir
