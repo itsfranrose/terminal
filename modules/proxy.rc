@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/zsh
 
 export_proxy() {
     export HTTP_PROXY="$2://$1"

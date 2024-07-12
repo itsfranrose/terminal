@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/zsh
 
 metadata-backup() {
     if [ -z "$1" ] || [ ! -f "$1" ]; then

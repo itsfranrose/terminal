@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/zsh
 
 encrypt-file() {
 	[ -z "$1" ] && log_error "$0: arg infile must be provided" && return 1

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/zsh
 
 integrate-new-github-repo() {
 	# I don't recall what this was used for

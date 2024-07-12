@@ -1,0 +1,5 @@
+#!/usr/bin/zsh
+
+if [ -f "$LFCD" ]; then
+	source "$LFCD"
+fi

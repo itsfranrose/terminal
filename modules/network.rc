@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/zsh
 
 # TODO: replace tsocks with proxy-chains
 
