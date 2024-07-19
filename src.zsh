@@ -2,6 +2,14 @@
 
 thisdir="$(realpath "$(dirname "$0")")"
 
+if [[ ! "$0" = src.sh ]]; then # for lightdm's .xprofile
+	if [ -d "$HOME"/.zim/modules/terminal ]; then
+		thisdir="$HOME"/.zim/modules/terminal
+	elif [ -d "$HOME"/Studio/Terminal ]; then
+		thisdir"$HOME"/Studio/Terminal
+	fi
+fi
+
 case "$1" in
 	env)
 		shift
