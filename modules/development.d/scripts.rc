@@ -8,14 +8,14 @@ run-script(){
 	workon "$old_venv"
 }
 
-scripts=$(find $SCRIPTS_DIR -not -path "*/.git/*" -name "*.py" -type f)
-while IFS= read -r script; do
-    pylength=".py"; pylength="${#pylength}"
-    filename="$(basename "$script")"
-    flength="${#filename}"
-    end=$((flength - pylength))
-    filename="${filename:0:$end}"
-    filename="py-$filename"
-	
-	alias $filename="run-script \"scripts\" \"$script\""
-done <<< "$scripts"
+# scripts=$(find $SCRIPTS_DIR -not -path "*/.git/*" -name "*.py" -type f)
+# while IFS= read -r script; do
+#     pylength=".py"; pylength="${#pylength}"
+#     filename="$(basename "$script")"
+#     flength="${#filename}"
+#     end=$((flength - pylength))
+#     filename="${filename:0:$end}"
+#     filename="py-$filename"
+# 	
+# 	alias $filename="run-script \"scripts\" \"$script\""
+# done <<< "$scripts"
