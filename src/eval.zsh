@@ -1,5 +1,5 @@
 #!/usr/bin/zsh
 
-while IFS=$'\n' read -r -d $'\n' file; do
-	source "$file"
-done < <(find "$1" -type f -name "*.$2" -print | sort)
+for file in $(find "$1" -type f -name "*.$2" -print | sort); do
+    source "$file"
+done
