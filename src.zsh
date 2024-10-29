@@ -2,11 +2,11 @@
 
 thisdir="$(realpath "$(dirname "$0")")"
 
-if [[ ! "$0" = src.sh ]]; then # for lightdm's .xprofile
+if [[ ! "$0" == *src.zsh ]]; then  # for lightdm's .xprofile
 	if [ -d "$HOME"/.zim/modules/terminal ]; then
 		thisdir="$HOME"/.zim/modules/terminal
 	elif [ -d "$HOME"/Studio/Terminal ]; then
-		thisdir"$HOME"/Studio/Terminal
+		thisdir="$HOME"/Studio/Terminal
 	fi
 fi
 
@@ -37,14 +37,13 @@ case "$1" in
 		"$compfile" "$thisdir"/modules rc
 		;;
 	clean)
+		find "${thisdir}" -type f -name "*.zwc" | xargs -I{} rm -v -f {}
+		find "${thisdir}" -type d -name "*.zwc.d" | xargs -I{} rm -v -rf {}
+		;;
+	recompile)
 		thisfile="${thisdir}/$(basename "$0")"
-		rm -v -rf \
-			"$thisfile".zwc \
-			"$thisdir"/src/compile.zsh.zwc \
-			"$thisdir"/src/eval.zsh.zwc \
-			"$thisdir"/env/.zwc.d \
-			"$thisdir"/aliases/.zwc.d \
-			"$thisdir"/modules/.zwc.d
+		source "${thisfile}" clean
+		source "${thisfile}" compile
 		;;
 	dev)
 		source "$thisdir"/src/eval-dev.zsh "$thisdir"/env env
