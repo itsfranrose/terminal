@@ -1,0 +1,28 @@
+#!/usr/bin/zsh
+
+vscode() {
+	zparseopts -M -D -E \
+		f::=arg_file -file::=f \
+		F::=arg_folder -folder::=F \
+		n=arg_new_window -new-window=n \
+		r=arg_reuse_window -reuse-window=r
+
+	arg_file="$(echo "$arg_file" | sed -E -e 's|^-f||g')"
+	arg_folder="$(echo "$arg_folder" | sed -E -e 's|^-F||g')"
+
+	path_arg=""
+	if [ -n "$arg_file" ]; then
+		path_arg="--goto $arg_file"
+	elif [ -n "$arg_folder" ] ;then
+		path_arg="--add $arg_folder"
+	fi
+
+	window_arg=""
+	if [ -n "$arg_new_window" ]; then
+		window_arg="--new-window"
+	elif [ -n "$arg_reuse_window" ]; then
+		window_arg="--reuse-window"
+	fi
+
+	code "$window_arg" "$path_arg"
+}
