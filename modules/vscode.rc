@@ -18,8 +18,8 @@ vscode() {
 	fi
 
 	if [ -n "$arg_file" ]; then
-		echo eval "code $window_arg --goto \"$arg_file\""
+		eval "code $window_arg --goto \"$arg_file\""
 	elif [ -n "$arg_folder" ] ;then
-		echo eval "code $window_arg --add \"$arg_folder\""
+		eval "code $window_arg --add \"$arg_folder\""
 	fi
 }
