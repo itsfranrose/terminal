@@ -24,7 +24,7 @@ tsocks-conf() { ls -l /etc/tsocks.conf ; }
 
 dl-mul() {
     username="$(cat "$CREDENTIALS_DIR"/multishare.username)"
-    passwd="$(view-cred "$CREDENTIALS_DIR"/multishare.passwd.enc --cat 2>/tmp/enc)"
+    passwd="$(view-cred "$CREDENTIALS_DIR"/multishare.passwd.enc --cat 2>|/tmp/enc)"
     if [[ "$(cat /tmp/enc)" =~ ^bad\ decrypt.* ]]; then
         log_error "wrong password provided for multishare.passwd"
         return 2
