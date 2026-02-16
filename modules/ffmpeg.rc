@@ -17,3 +17,10 @@ ffmpeg-copy() {
 	[ -z "$output" ] && output="$(pwd)"
 	ffmpeg -i "$input_file" -ss "$start_time" -to "$end_time" -c:v copy -map 0 "$output"
 }
+
+ffmpeg-ts2mp4() {
+	if [ -z "$1" ] || [[ ! "$1" =~ \.ts$ ]]; then
+		return 2
+	fi
+	ffmpeg -i "$1" -c copy "${1%.ts}.mp4"
+}
