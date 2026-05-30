@@ -71,6 +71,22 @@ hiddify-insecure-http-proxy() {
     export_proxy $HIDDIFY_PROXY http http
 }
 
+happ-insecure-http-proxy() {
+    export_proxy $HAPP_PROXY http http
+}
+
+gscript-insecure-http-proxy() {
+    export_proxy $GSCRIPT_PROXY http http
+}
+
+unset-proxy() {
+    unset HTTP_PROXY
+    unset HTTPS_PROXY
+    unset http_proxy
+    unset https_proxy
+}
+
+
 unset-proxy() {
     unset HTTP_PROXY
     unset HTTPS_PROXY
